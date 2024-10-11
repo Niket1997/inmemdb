@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/Niket1997/inmemdb/server"
 	"log"
+
+	"github.com/Niket1997/inmemdb/server"
 
 	"github.com/Niket1997/inmemdb/config"
 )
