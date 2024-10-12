@@ -18,5 +18,9 @@ func setupFlags() {
 func main() {
 	setupFlags()
 	log.Println("starting the inmemdb server :)")
-	server.RunSyncTCPServer()
+	err := server.RunAsyncTCPServer()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
