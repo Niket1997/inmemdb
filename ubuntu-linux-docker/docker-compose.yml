@@ -1,0 +1,12 @@
+services:
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ubuntu_container
+    volumes:
+      - /Users/aniket.mahangare/myProjects:/home/docker_user/myProjects
+    ports:
+      - "7379:7379"
+    stdin_open: true  # Keep STDIN open even if not attached
+    tty: true         # Allocate a pseudo-TTY
