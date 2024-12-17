@@ -78,10 +78,10 @@ func RunSyncTCPServer() {
 				c.Close()
 				conClients--
 				log.Println("client disconnected", c.RemoteAddr(), "concurrent clients", conClients)
-				if err == io.EOF {
-					break
+				if err != io.EOF {
+					log.Println("err", err)
 				}
-				log.Println("err", err)
+				break
 			}
 			respond(cmd, c)
 		}
