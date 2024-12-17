@@ -4,9 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/Niket1997/inmemdb/server"
-
 	"github.com/Niket1997/inmemdb/config"
+	"github.com/Niket1997/inmemdb/server"
 )
 
 func setupFlags() {
