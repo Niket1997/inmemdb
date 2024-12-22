@@ -1,14 +1,53 @@
 package server
 
 import (
+	"fmt"
 	"github.com/Niket1997/inmemdb/config"
 	"github.com/Niket1997/inmemdb/core"
+	"io"
 	"log"
 	"net"
+	"strings"
 	"syscall"
 )
 
 var connClients = 0
+
+func readCommand(c io.ReadWriter) (*core.RedisCmd, error) {
+	// TODO: Max read in one shot is 512 bytes
+	// To allow input > 512 bytes, then repeated read until
+	// we get EOF or designated delimiter
+	var buf []byte = make([]byte, 512)
+	// Read is blocking command, i.e. the code will wait until there
+	// is something to read from the socket connection
+	n, err := c.Read(buf[:])
+	if err != nil {
+		return nil, err
+	}
+
+	tokens, err := core.DecodeArrayString(buf[:n])
+	if err != nil {
+		return nil, err
+	}
+	return &core.RedisCmd{
+		Cmd:  strings.ToUpper(tokens[0]),
+		Args: tokens[1:],
+	}, nil
+}
+
+func respondError(err error, c io.ReadWriter) {
+	_, err2 := c.Write([]byte(fmt.Sprintf("-%s\r\n", err)))
+	if err2 != nil {
+		log.Println(err2)
+	}
+}
+
+func respond(cmd *core.RedisCmd, c io.ReadWriter) {
+	err := core.EvalAndRespond(cmd, c)
+	if err != nil {
+		respondError(err, c)
+	}
+}
 
 func RunAsyncTCPServer() error {
 	log.Println("starting a asynchronous TCP server on", config.Host, config.Port)
